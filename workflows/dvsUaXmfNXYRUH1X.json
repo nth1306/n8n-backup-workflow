@@ -1,0 +1,409 @@
+{
+  "active": false,
+  "connections": {
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tesseract": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Tesseract",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-11-01T04:11:29.890Z",
+  "id": "dvsUaXmfNXYRUH1X",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Googledrive file",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1ZMbEBPUEudxY5QYpK98sc7Ln3U5VOg6S",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -240,
+        112
+      ],
+      "id": "90a24e32-1db5-4976-9c8a-d5852601d4f8",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "IO6E0eK0ONPc9TP3",
+          "name": "Google Drive hobuu"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "language": "vie",
+          "outputBinary": true
+        }
+      },
+      "type": "n8n-nodes-tesseractjs.tesseractNode",
+      "typeVersion": 1,
+      "position": [
+        192,
+        112
+      ],
+      "id": "6b1ae01b-52ba-4d4f-9ba9-fa39ca6ca0ee",
+      "name": "Tesseract"
+    },
+    {
+      "parameters": {
+        "numberInputs": 10
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        416,
+        -16
+      ],
+      "id": "7811946a-4e53-4481-afcc-a4f9ac745072",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.ocr }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "Bạn là trợ lý trích xuất thông tin thông minh từ văn bản OCR.\n\nNhiệm vụ:\n1. Đọc toàn bộ nội dung OCR sau đây.\n2. Xác định loại tài liệu (ví dụ: hợp đồng, giấy chứng nhận, hóa đơn, v.v.)\n3. Nếu có tên \"Hồ Bửu\" trong văn bản:\n   - Xem \"Hồ Bửu\" là đại diện cho **tôi** (người đang gửi tài liệu).\n   - Cho biết \"Hồ Bửu\" là bên **mua** hay **bên bán** (tùy theo ngữ cảnh văn bản).\n4. Tóm tắt lại các thông tin chính của tài liệu, gồm:\n   - Loại tài liệu\n   - Các bên liên quan\n   - Địa chỉ, số hợp đồng (nếu có)\n   - Số tiền / giá trị bảo hiểm hoặc giao dịch\n   - Thời hạn hiệu lực (nếu có)\n   - Các điều khoản nổi bật\n   - Mục đích hoặc phạm vi tài liệu\n5. Nếu OCR bị lỗi hoặc thiếu sót, hãy diễn giải một cách hợp lý nhất.\n\nĐầu ra mong muốn:\nTrả về bản tóm tắt ngắn gọn, có cấu trúc rõ ràng, dễ đọc.Hãy trả lời hoàn toàn ở dạng JSON, đúng theo cấu trúc sau:\n{\n  \"loai_tai_lieu\": \"...\",\n  \"nguoi_mua\": \"...\",\n  \"nguoi_ban\": \"...\",\n  \"so_tien\": \"...\",\n  \"thoi_han\": \"...\",\n  \"tom_tat\": \"...\"\n}\nKhông thêm bất kỳ chữ, giải thích hay mô tả nào bên ngoài JSON.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1088,
+        112
+      ],
+      "id": "208baf81-b294-4c4f-8589-935518145ab7",
+      "name": "AI Agent",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"loai_tai_lieu\": \"...\",\n  \"nguoi_mua\": \"...\",\n  \"nguoi_ban\": \"...\",\n  \"so_tien\": \"...\",\n  \"thoi_han\": \"...\",\n  \"tom_tat\": \"...\"\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1248,
+        320
+      ],
+      "id": "6b0d98ad-d187-4ede-8a54-a0ea75a829c5",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "14JLdzuC8gIQMH0rFjNS27tOW70FxQScwazGY5AamZZ0",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "UID": "={{ Math.random().toString(36).substring(2, 10) }}\n",
+            "Nguoi mua": "={{ $json.output.nguoi_mua }}",
+            "Nguoi Ban ": "={{ $json.output.nguoi_ban }}",
+            "So tien": "={{ $json.output.so_tien }}",
+            "Thoi han": "={{ $json.output.thoi_han }}",
+            "Tom Tat": "={{ $json.output.tom_tat }}",
+            "File ID": "{{$node[\"Download file\"].json[\"id\"]}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "UID",
+              "displayName": "UID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Loai tai lieu",
+              "displayName": "Loai tai lieu",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Nguoi mua",
+              "displayName": "Nguoi mua",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Nguoi Ban ",
+              "displayName": "Nguoi Ban ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "So tien",
+              "displayName": "So tien",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Thoi han",
+              "displayName": "Thoi han",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Tom Tat",
+              "displayName": "Tom Tat",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "File ID",
+              "displayName": "File ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1552,
+        112
+      ],
+      "id": "15e6cd10-2c65-4d39-af32-eaadad1184ba",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "vOAignUeMBCL6Owu",
+          "name": "Google Sheets account nth1306"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        544
+      ],
+      "id": "6909e5b7-b103-4612-82f6-678b0220adbf",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "X6pltkZzDL22gypS",
+          "name": "Google Gemini(PaLM) Api account nth1306"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        944,
+        320
+      ],
+      "id": "a44906b6-48a3-4dbf-a4be-7c8a5a2147e2",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "X6pltkZzDL22gypS",
+          "name": "Google Gemini(PaLM) Api account nth1306"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const allText = $input.all().map(item => item.json.text).join('\\n\\n');\nreturn [{ json: { ocr: allText } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        -16
+      ],
+      "id": "bb262c13-ed93-4747-a2d1-c3c2029ac1fe",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Nếu file được tải về từ Google Drive, ta có thể lấy ID từ node trước\n// hoặc chèn thủ công nếu cần\n\n// 1️⃣ Thử lấy từ node Download file (nếu có)\nlet fileId = $node[\"Download file\"].json?.id;\n\n// 2️⃣ Nếu không có (vì là binary), thử lấy từ binary\nif (!fileId && $node[\"Download file\"].binary?.data?.id) {\n  fileId = $node[\"Download file\"].binary.data.id;\n}\n\n// 3️⃣ Nếu vẫn không có, bạn có thể tạm gán từ thông tin input của node Google Drive\n// Ví dụ: fileId = \"1ZMbEBPUEudxY5QYpK98sc7Ln3U5VOg6S\";\n\nconst currentData = $input.first().json;\n\nreturn [\n  {\n    json: {\n      ...currentData,\n      file_id: fileId || \"Không tìm thấy file ID\"\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -32,
+        112
+      ],
+      "id": "6dc9a964-d2cd-4d3f-8dbd-3fff905f2fef",
+      "name": "Code in JavaScript1"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "updatedAt": "2025-11-01T04:11:29.899Z",
+      "createdAt": "2025-11-01T04:11:29.899Z",
+      "role": "workflow:owner",
+      "workflowId": "dvsUaXmfNXYRUH1X",
+      "projectId": "PCMRAJVcD8aV4Oqp"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-11-09T10:09:12.000Z",
+  "versionId": "f4fc91f2-49a2-4e35-8b48-a46c810d9852"
+}

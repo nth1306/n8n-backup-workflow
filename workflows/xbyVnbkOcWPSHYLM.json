@@ -105,25 +105,7 @@
     },
     "JSON formatting": {
       "main": [
-        [
-          {
-            "node": "Loop Over Items",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Loop Over Items": {
-      "main": [
-        [],
-        [
-          {
-            "node": "Execute Workflow",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Execute Workflow": {
@@ -222,6 +204,29 @@
             "node": "Merge Items",
             "type": "main",
             "index": 1
+          }
+        ]
+      ]
+    },
+    "Globals": {
+      "main": [
+        [
+          {
+            "node": "Get file data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Execute Workflow",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -498,19 +503,6 @@
     },
     {
       "parameters": {
-        "options": {}
-      },
-      "id": "f3b523eb-6c9c-4803-b5f9-aee800913e02",
-      "name": "Loop Over Items",
-      "type": "n8n-nodes-base.splitInBatches",
-      "position": [
-        -384,
-        464
-      ],
-      "typeVersion": 3
-    },
-    {
-      "parameters": {
         "rule": {
           "interval": [
             {
@@ -716,6 +708,19 @@
         96
       ],
       "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "f3b523eb-6c9c-4803-b5f9-aee800913e02",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        -384,
+        464
+      ],
+      "typeVersion": 3
     }
   ],
   "pinData": {},
@@ -734,6 +739,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2025-11-11T02:42:00.000Z",
-  "versionId": "02d3c38c-f3f7-4193-bbb9-821084a519d0"
+  "updatedAt": "2025-11-11T03:22:45.000Z",
+  "versionId": "63d3615f-9db5-4bfc-854c-5130ed2ce146"
 }

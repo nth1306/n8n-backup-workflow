@@ -1,0 +1,349 @@
+{
+  "active": false,
+  "connections": {},
+  "createdAt": "2025-11-11T03:27:35.688Z",
+  "id": "2P2tJvap7rq4GSwZ",
+  "isArchived": false,
+  "meta": null,
+  "name": "Invoice OCR",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "7bde8ec5-f336-43e9-80c0-5bd9c8e45995",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        560,
+        -272
+      ],
+      "typeVersion": 1,
+      "notes": "This manualTrigger node performs automated tasks as part of the workflow."
+    },
+    {
+      "parameters": {
+        "content": "# Recognize invoices and convert them into structured JSON\n## Video Demo\n{{ $env.WEBHOOK_URL }}\n\n## Quick OCR playground\n### 1. Get your OakPDF OCR API key here:\n{{ $env.API_BASE_URL }}\n\n### 2. Poceed to the OCR Playground and upload your document or use example files:\n{{ $env.WEBHOOK_URL }} \n\n\n**The API can recognize any document format: medical, financial, legal -- let me know which format you want to try and I will be happy to add it to the Playground!**\n\n## Running the n8n Workflow\nThis workflow allows you to recognize a folder with receipts or invoices (make sure your files are in .pdf, .png, or .jpg format). The workflow can be triggered via the \"Test workflow\" button, and it also monitors the folder for new files, automatically recognizing them.\n\n### 1. n8n import glitch\nAfter import, the trigger node \"When clicking 'Test workflow'\" might be disconnected. You need to connect it via 2 arrows to \"Google Sheets1\" and \"Google Drive\" nodes. So, the workflow has 2 triggers - via button, and via Google Sheets \"new file\" event - both of these triggers should be connected to 2 nodes.\nHere is how it should looks like: {{ $env.WEBHOOK_URL }}\n\n\n### 2. Set up RapidAPI HTTP auth key\nCreate new \"HTTP header\" n8n credential and paste your RapidAPI key from {{ $env.API_BASE_URL }}  into it. {{ $env.API_BASE_URL }}\n\nMake sure \"HTTP Request\" node uses this credential.\n\n### 3. Set up your Google Auth\nYou need a Google connection to work with your Google Sheets and Google Drive accounts: {{ $env.WEBHOOK_URL }}\n\n### 4. Set up Google Sheets\nCopy this Google Sheets document: {{ $env.WEBHOOK_URL }}\n\n# Custom document formats and advanced usage\nEmail: contact@scrapeninja.net \nLinkedin: {{ $env.WEBHOOK_URL }}\n",
+        "height": 1062.9450261780098,
+        "width": 1120.9554973821976
+      },
+      "id": "a2432c77-fd50-4bc3-9ef3-be7c18d4a1bc",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1232,
+        192
+      ],
+      "typeVersion": 1,
+      "notes": "This stickyNote node performs automated tasks as part of the workflow."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "{{ $env.API_BASE_URL }}",
+        "authentication": "{{ $credentials.genericCredentialType }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "settings",
+              "value": "{ \"documentType\": \"invoice\" }"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7638d91c-5d3e-4ef8-85be-13ed0c090bee",
+      "name": "OCR recognize",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1728,
+        -48
+      ],
+      "typeVersion": 4.2,
+      "notes": "This httpRequest node performs automated tasks as part of the workflow."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  item.json.parsedData = JSON.parse(item.json.result.data);\n}\n\nreturn $input.all();"
+      },
+      "id": "25fe5959-f30d-4437-a22b-7596a46eac4a",
+      "name": "Unserialize response JSON",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        1952,
+        -48
+      ],
+      "typeVersion": 2,
+      "notes": "This code node performs automated tasks as part of the workflow."
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1MjLoaDp2KgJgJDfgUce8RmniwGBUOZnI",
+          "cachedResultUrl": "{{ $env.WEBHOOK_URL }}",
+          "cachedResultName": "n8n_test_ocr"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "id": "731b0913-d2e7-44e9-9cdf-ffe3eb4dce8b",
+      "name": "On new file in Google Drive",
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "position": [
+        560,
+        80
+      ],
+      "typeVersion": 1,
+      "notes": "This googleDriveTrigger node performs automated tasks as part of the workflow."
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "1MjLoaDp2KgJgJDfgUce8RmniwGBUOZnI",
+            "cachedResultUrl": "{{ $env.WEBHOOK_URL }}",
+            "cachedResultName": "n8n_test_ocr"
+          }
+        },
+        "options": {}
+      },
+      "id": "cab91c70-ad4e-430a-a726-f5131987c98a",
+      "name": "Load files from Google Drive folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        944,
+        80
+      ],
+      "executeOnce": true,
+      "typeVersion": 3,
+      "notes": "This googleDrive node performs automated tasks as part of the workflow."
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "id",
+        "joinMode": "keepNonMatches",
+        "outputDataFrom": "input2",
+        "options": {}
+      },
+      "id": "3e0b344e-8ff7-4b18-ab8d-816212966278",
+      "name": "Filter processed files",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        1264,
+        -48
+      ],
+      "typeVersion": 3,
+      "notes": "This merge node performs automated tasks as part of the workflow."
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.id }}"
+        },
+        "options": {}
+      },
+      "id": "8d5270ab-a9fe-4667-ba57-89474a9490ef",
+      "name": "Download file for OCR",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        1504,
+        -48
+      ],
+      "typeVersion": 3,
+      "notes": "This googleDrive node performs automated tasks as part of the workflow."
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "19ACXNwlTDB73obmvSNJB3sA06ADF2myJGmAeiSa3NN8",
+          "cachedResultUrl": "{{ $env.WEBHOOK_URL }}",
+          "cachedResultName": "n8n_test_ocr"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gid=0",
+          "cachedResultUrl": "{{ $env.WEBHOOK_URL }}",
+          "cachedResultName": "Sheet1"
+        },
+        "columns": {
+          "value": {
+            "id": "={{ $('Load files from Google Drive folder').item.json.id }}",
+            "data": "={{ $json.parsedData }}",
+            "from": "={{ $json.parsedData.from.company_name }}  (country: {{ $json.parsedData.from.addr_country_code }})",
+            "amount": "={{ $json.parsedData.total_due }}  {{ $json.parsedData.currency }}",
+            "filename": "={{ $('Load files from Google Drive folder').item.json.name }}",
+            "line1_cost": "={{ $json.parsedData.lines[0].line_cost }}",
+            "line1_descr": "={{ $json.parsedData.lines[0].descr }}"
+          },
+          "schema": [
+            {
+              "id": "id",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "id",
+              "defaultMatch": true,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "filename",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "filename",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "data",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "data",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "from",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "from",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "amount",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "amount",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "line1_descr",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "line1_descr",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "line1_cost",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "line1_cost",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "id"
+          ]
+        },
+        "options": {}
+      },
+      "id": "ac4ec29a-7a58-4135-8e76-606943d66c6f",
+      "name": "Save OCR result into Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        2160,
+        -48
+      ],
+      "typeVersion": 4.3,
+      "notes": "This googleSheets node performs automated tasks as part of the workflow."
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "19ACXNwlTDB73obmvSNJB3sA06ADF2myJGmAeiSa3NN8",
+          "cachedResultUrl": "{{ $env.WEBHOOK_URL }}",
+          "cachedResultName": "n8n_test_ocr"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gid=0",
+          "cachedResultUrl": "{{ $env.WEBHOOK_URL }}",
+          "cachedResultName": "Sheet1"
+        },
+        "options": {}
+      },
+      "id": "26a61988-2eca-4bf0-a723-d4bf5aceba60",
+      "name": "Get already processed rows from Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        944,
+        -272
+      ],
+      "executeOnce": true,
+      "typeVersion": 4.3,
+      "alwaysOutputData": true,
+      "notes": "This googleSheets node performs automated tasks as part of the workflow."
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "updatedAt": "2025-11-11T03:27:35.691Z",
+      "createdAt": "2025-11-11T03:27:35.691Z",
+      "role": "workflow:owner",
+      "workflowId": "2P2tJvap7rq4GSwZ",
+      "projectId": "PCMRAJVcD8aV4Oqp"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-11-11T03:27:35.688Z",
+  "versionId": "cbe42b53-720e-48d4-9bd3-21c286dfad36"
+}
